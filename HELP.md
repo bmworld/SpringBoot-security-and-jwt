@@ -1,3 +1,22 @@
+# SpringBoot Security Practice
+
+```text
+# security default user
+ID: user
+PW: Running Application 시작 후 Console 에서 제공됨
+```
+
+
+
+
+
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+
 # Getting Started
 
 ### Reference Documentation
