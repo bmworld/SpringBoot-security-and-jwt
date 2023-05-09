@@ -22,6 +22,8 @@ public class Member extends BaseEntity{
     @Enumerated(EnumType.STRING)
     private RoleType role; // ADMIN, MANAGER, USER
     private LocalDateTime loginDate;
+    private String provider;
+    private String providerId;
 
     @Override
     public String toString() {

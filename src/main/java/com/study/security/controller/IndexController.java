@@ -1,5 +1,6 @@
 package com.study.security.controller;
 
+import com.study.security.config.auth.PrincipalDetails;
 import com.study.security.domain.Member;
 import com.study.security.domain.RoleType;
 import com.study.security.respotiroy.MemberRepository;
@@ -7,7 +8,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,6 +25,43 @@ public class IndexController {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
 
+    /**
+     * <h1>Security - Member 정보 가져오기</h1>
+     * @param authentication Security 세션정보를 받을 수 있다. (Authentication DI(의존성 주입) 시, Principal 접근 가능)
+     * @param userDetails Annotation 사용한 유저정보 가져오기 (PrincipalDetails은 UserDetails을 상속받았기 때문에 유저정보가 있음)
+     */
+    @GetMapping("/session/security")
+    public @ResponseBody String loginInfo_security(
+            Authentication authentication,
+            @AuthenticationPrincipal PrincipalDetails userDetails
+            ) {
+
+        PrincipalDetails principal = (PrincipalDetails) authentication.getPrincipal();
+
+        System.out.println("principal.getMember() = " + principal.getMember());
+        System.out.println("userDetails.getMember() = " + userDetails.getMember());
+
+        return "Security - 세션 정보 확인";
+    }
+
+
+    /**
+     * <h1>Oauth - Member 정보 가져오기</h1>
+     * @param authentication Oauth2User로 DownCasting 후, 유저정보 가져올 수 있음
+     * @param oauth2UserBy_AuthenticationPrincipal  Annotation 사용한 유저정보 가져오기
+     */
+    @GetMapping("/session/oauth")
+    public @ResponseBody String loginInfo_oauth(
+            Authentication authentication,
+            @AuthenticationPrincipal OAuth2User oauth2UserBy_AuthenticationPrincipal
+    ) {
+
+        OAuth2User oauth2UserByAuthentication = (OAuth2User) authentication.getPrincipal();
+
+        System.out.println("----- Authentication > getPrincipal() > getAttributes() = " + oauth2UserByAuthentication.getAttributes());
+        System.out.println("----- @AuthenticationPrincipal OAuth2User > getAttributes() = " + oauth2UserBy_AuthenticationPrincipal.getAttributes());
+        return "OAuth2 - 세션 정보 확인";
+    }
     @GetMapping({"/", "/hello"})
     public String index() {
         return "index";
@@ -89,7 +131,6 @@ public class IndexController {
     }
 
     @PreAuthorize("hasRole('ROLE_MANAGER') or hasRole('ROLE_ADMIN')")
-    @PostAuthorize()
     @GetMapping("/data-info")
     public @ResponseBody String managerInfo() {
         return "매니저 정보";
