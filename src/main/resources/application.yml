@@ -12,7 +12,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/security?serverTimezone=Asia/Seoul
     username: bm
-    password: 1234
+    password: ${DB_MYSQL_PASSWORD}
 
   mvc:
     view:
@@ -22,30 +22,24 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update # create, update, none
-#      naming:
-#        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
     show-sql: true
 
-#  security:
-#    oauth2:
-#      client:
-#        registration:
-#          google: # /oauth2/authorization/google 이 주소를 동작하게 한다.
-#            client-id: 머시기
-#            client-secret: 머시기
-#            scope:
-#              - email
-#              - profile
-#
+  security:
+    oauth2:
+      client:
+        registration:
+          google: # /oauth2/authorization/google 이 주소를 동작하게 한다.
+            client-id: ${OAUTH2_GOOGLE_CLIENT_ID}
+            client-secret: ${OAUTH2_GOOGLE_CLIENT_SECRET}
+            scope:
+              - email
+              - profile
 #          facebook:
 #            client-id: 머시기
 #            client-secret: 머시기
 #            scope:
 #              - email
 #              - public_profile
-#
-#          # 네이버는 OAuth2.0 공식 지원대상이 아니라서 provider 설정이 필요하다.
-#          # 요청주소도 다르고, 응답 데이터도 다르기 때문이다.
 #          naver:
 #            client-id: 머시기
 #            client-secret: 머시기

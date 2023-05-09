@@ -1,5 +1,7 @@
 package com.study.security.config;
 
+import com.study.security.config.oauth.PrincipalOauth2UserService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -16,9 +18,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
  *
  */
 @EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true )
+@RequiredArgsConstructor
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 
+    private final PrincipalOauth2UserService principalOauth2UserService;
     /**
      * BCrypt 암호화를 Bean 등록하여, 회원가입 시 사용
      */
@@ -27,6 +31,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return new BCryptPasswordEncoder();
     }
 
+    /**
+     * <h3>Oauth - Process</h3>
+     * <pre>
+     *     1. 코드 받기 (인증)
+     *     2. Access Token
+     *     3. 사용자 Profile 받기
+     * </pre>
+     */
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable(); // csrf: Cross site Request forgery //
@@ -40,6 +52,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .loginPage("/loginForm")
                 .loginProcessingUrl("/login") // login 주소가 호출될 경우, Security가 intercept해서 대신 Login처리함.
                 .defaultSuccessUrl("/")
+                .and()
+                // OAUTH2 MAPPING
+                .oauth2Login()
+                .loginPage("/loginForm")
+                .userInfoEndpoint()
+                .userService(principalOauth2UserService) // 구글 로그인 완료 후 => Access Token, 사용자 profile 넣기)
         ;
     }
 }
