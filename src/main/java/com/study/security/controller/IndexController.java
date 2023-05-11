@@ -1,20 +1,20 @@
 package com.study.security.controller;
 
+import com.study.security.config.auth.CurrentUser;
 import com.study.security.config.auth.PrincipalDetails;
 import com.study.security.domain.Member;
-import com.study.security.domain.RoleType;
 import com.study.security.respotiroy.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @RequiredArgsConstructor
@@ -23,6 +23,7 @@ public class IndexController {
     private final MemberRepository memberRepository;
 
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+
 
 
     /**
@@ -69,12 +70,15 @@ public class IndexController {
 
 
     @GetMapping("/user")
-    public @ResponseBody String user() {
+    public @ResponseBody String user(@AuthenticationPrincipal PrincipalDetails principalDetails) {
+        System.out.println("principalDetails.getMember() = " + principalDetails);
+
         return "user";
     }
 
     @GetMapping("/admin")
-    public @ResponseBody String admin() {
+    public @ResponseBody String admin(@CurrentUser Member member) {
+        System.out.println("@CurrentUser > member = " + member);
         return "admin";
     }
 

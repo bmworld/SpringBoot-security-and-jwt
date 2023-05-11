@@ -1,9 +1,7 @@
 package com.study.security.config.auth;
 
 import com.study.security.domain.Member;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -29,23 +27,31 @@ import java.util.Map;
  */
 @Getter
 @ToString
-@RequiredArgsConstructor
 public class PrincipalDetails implements UserDetails, OAuth2User {
 
-    private final Member member;
+    private Member member;
+    private Map<String, Object> attributes;
 
+    public PrincipalDetails(Member member) {
+        this.member = member;
+    }
+
+    public PrincipalDetails(Member member, Map<String, Object> attributes) {
+        this.member = member;
+        this.attributes = attributes;
+    }
 
     // #################################################################
     // Oauth2User implements Methods
     @Override
     public Map<String, Object> getAttributes() {
-        return null;
+        return attributes;
     }
 
 
     @Override
     public String getName() {
-        return null;
+        return (String) attributes.get("name"); // 강사님은 null 처리함
     }
 
     // #################################################################
@@ -90,5 +96,6 @@ public class PrincipalDetails implements UserDetails, OAuth2User {
         // 사이트에서 1년 동안 로그인하지 않았다면
         return true; // 활성화된 계정인가?
     }
+
 
 }

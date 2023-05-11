@@ -29,6 +29,13 @@ import java.util.Optional;
 public class PrincipalDetailsService implements UserDetailsService {
 
     private final MemberRepository memberRepository;
+
+    //
+
+    /**
+     * <h1>PrincipalDetailsService 호출 시, `@AuthenticationPrincipal` 어노테이션 만들이진다.</h1>
+     * - Security 내부 세션 <br/>
+     */
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         System.out.println("----- username = " + username);

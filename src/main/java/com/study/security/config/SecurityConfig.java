@@ -21,15 +21,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 @RequiredArgsConstructor
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-
     private final PrincipalOauth2UserService principalOauth2UserService;
-    /**
-     * BCrypt 암호화를 Bean 등록하여, 회원가입 시 사용
-     */
-    @Bean
-    public BCryptPasswordEncoder encodePw() {
-        return new BCryptPasswordEncoder();
-    }
 
     /**
      * <h3>Oauth - Process</h3>
