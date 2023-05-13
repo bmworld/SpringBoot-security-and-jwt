@@ -58,7 +58,6 @@ public class IndexController {
     ) {
 
         OAuth2User oauth2UserByAuthentication = (OAuth2User) authentication.getPrincipal();
-
         System.out.println("----- Authentication > getPrincipal() > getAttributes() = " + oauth2UserByAuthentication.getAttributes());
         System.out.println("----- @AuthenticationPrincipal OAuth2User > getAttributes() = " + oauth2UserBy_AuthenticationPrincipal.getAttributes());
         return "OAuth2 - 세션 정보 확인";
@@ -71,8 +70,7 @@ public class IndexController {
 
     @GetMapping("/user")
     public @ResponseBody String user(@AuthenticationPrincipal PrincipalDetails principalDetails) {
-        System.out.println("principalDetails.getMember() = " + principalDetails);
-
+        System.out.println("----- principalDetails.getMember() = " + principalDetails.getMember());
         return "user";
     }
 
