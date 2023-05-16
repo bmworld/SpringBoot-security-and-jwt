@@ -1,9 +1,7 @@
 package com.study.security.config.oauth;
 
 
-import com.study.security.config.SecurityConfig;
 import com.study.security.config.auth.PrincipalDetails;
-import com.study.security.config.oauth.provider.FaceBookUserInfo;
 import com.study.security.config.oauth.provider.GoogleUserInfo;
 import com.study.security.config.oauth.provider.NaverUserInfo;
 import com.study.security.config.oauth.provider.OAuth2UserInfo;
@@ -12,8 +10,6 @@ import com.study.security.domain.RoleType;
 import com.study.security.respotiroy.MemberRepository;
 import com.study.security.util.RandomUtils;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
@@ -78,7 +74,7 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
     String username = provider + "_" + providerId;
     String password = bCryptPasswordEncoder.encode(RandomUtils.generateSecureRandomString(10));
     String email = oauth2UserInfo.getEmail();
-    RoleType roleType = RoleType.USER;
+    String roleType = RoleType.to(RoleType.USER);
     
     Optional<Member> optionalMember = memberRepository.findByUsername(username);
     // 기존 회원이 아닐 경우
@@ -88,7 +84,7 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
         .username(username)
         .password(password)
         .email(email)
-        .role(roleType)
+        .roles(roleType)
         .loginDate(now())
         .provider(provider)
         .providerId(providerId)

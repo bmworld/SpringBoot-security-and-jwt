@@ -7,6 +7,15 @@ PW: Running Application 시작 후 Console 에서 제공됨
 ```
 
 
+### <a href="https://github.com/codingspecialist/Springboot-Security-JWT-Easy/tree/version2">Lecture Repo Link</a>
+```text
+ - 강의명: 스프링부트 시큐리티 & JWT 강의
+ - Provider: Inflearn
+ - Lecture Link: https://www.inflearn.com/course/%EC%8A%A4%ED%94%84%EB%A7%81%EB%B6%80%ED%8A%B8-%EC%8B%9C%ED%81%90%EB%A6%AC%ED%8B%B0/dashboard
+ ```
+ 
+
+
 
 
 
