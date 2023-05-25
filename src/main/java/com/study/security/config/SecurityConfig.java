@@ -1,5 +1,10 @@
 package com.study.security.config;
 
+import com.study.security.config.filter.MyFilter1;
+import com.study.security.config.filter.MyFilter2;
+import com.study.security.config.filter.MyFilter3;
+import com.study.security.config.filter.MyFilter4;
+import com.study.security.config.jwt.JwtAuthenticationFilter;
 import com.study.security.config.oauth.PrincipalOauth2UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -10,6 +15,8 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+import org.springframework.security.web.context.SecurityContextPersistenceFilter;
 import org.springframework.web.filter.CorsFilter;
 
 @Configuration
@@ -61,15 +68,31 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     
     /**
      * <h1>JWT Ver.</h1>
+     * <pre>
+     * - 시큐리티 세션정책
+     * `SessionCreationPolicy.ALWAYS`      스프링시큐리티가 항상 세션을 생성
+     * `SessionCreationPolicy.IF_REQUIRED` 스프링시큐리티가 필요시 생성(기본)
+     * `SessionCreationPolicy.NEVER`       스프링시큐리티가 생성하지않지만, 기존에 존재하면 사용
+     * `SessionCreationPolicy.STATELESS`   스프링시큐리티가 생성하지도않고 기존것을 사용하지도 않음
+     * </pre>
      */
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+        ///################################
+        // Security 동작 전에 실행되는 Filter
+        http.addFilterBefore(new MyFilter1(), SecurityContextPersistenceFilter.class); // (커스텀필터, 스피링 필터) 해당 필터의 앞,뒤 중에서 실행될 순서를 지정
+
+        //
+        http.addFilterAfter(new MyFilter2(), BasicAuthenticationFilter.class);
+
+        ///################################
         http.csrf().disable();
-        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) // Security 세션정책
           .and()
           .addFilter(corsFilter) // 모든 HTTP Request에 Filter => 시큐리테 필터레 등록하여 인증 (@CrossOrigin Annotation은 인증 불가)
           .formLogin().disable()
           .httpBasic().disable()
+          .addFilter(new JwtAuthenticationFilter())
           .authorizeRequests()
           .antMatchers("/user/**").authenticated() // 인증만 되면, 접근가능하게 설정함.
           .antMatchers("/manager/**").access("hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')")
