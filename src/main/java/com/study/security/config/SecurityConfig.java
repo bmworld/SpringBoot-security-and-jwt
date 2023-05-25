@@ -2,19 +2,15 @@ package com.study.security.config;
 
 import com.study.security.config.filter.MyFilter1;
 import com.study.security.config.filter.MyFilter2;
-import com.study.security.config.filter.MyFilter3;
-import com.study.security.config.filter.MyFilter4;
 import com.study.security.config.jwt.JwtAuthenticationFilter;
 import com.study.security.config.oauth.PrincipalOauth2UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.context.SecurityContextPersistenceFilter;
 import org.springframework.web.filter.CorsFilter;
@@ -94,9 +90,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
           .httpBasic().disable()
           .addFilter(new JwtAuthenticationFilter(authenticationManager())) //  formLogin 비활성한 것을 부활시키기 위해,WebSecurityConfigurerAdapter가 들고있는 authenticationManager를 UsernamePasswordAuthenticationFilter 넘겨준다.
           .authorizeRequests()
-          .antMatchers("/user/**").authenticated() // 인증만 되면, 접근가능하게 설정함.
-          .antMatchers("/manager/**").access("hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')")
-          .antMatchers("/admin/**").access("hasRole('ROLE_ADMIN')")
+          .antMatchers("/api/user/**").authenticated() // 인증만 되면, 접근가능하게 설정함.
+          .antMatchers("/api/manager/**").access("hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')")
+          .antMatchers("/api/admin/**").access("hasRole('ROLE_ADMIN')")
           .antMatchers("/api/v1/user/**").authenticated() // 인증만 되면, 접근가능하게 설정함.
           .antMatchers("/api/v1/manager/**").access("hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')")
           .antMatchers("/api/v1/admin/**").access("hasRole('ROLE_ADMIN')")

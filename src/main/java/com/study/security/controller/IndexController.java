@@ -3,6 +3,7 @@ package com.study.security.controller;
 import com.study.security.config.auth.CurrentUser;
 import com.study.security.config.auth.PrincipalDetails;
 import com.study.security.domain.Member;
+import com.study.security.dto.JoinRequestDto;
 import com.study.security.respotiroy.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.annotation.Secured;
@@ -11,12 +12,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.core.user.OAuth2User;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
-@Controller
+@RestController
+@RequestMapping(value = "/api")
 @RequiredArgsConstructor
 public class IndexController {
 
@@ -117,14 +116,19 @@ public class IndexController {
    * Password 암호화하지 않을 경우, Security 를 사용한 Login 불가
    */
   @PostMapping("/join")
-  public String join(Member member) {
-    System.out.println("----- join > member = " + member);
-//        member.setRole(RoleType.USER);
-    String rawPW = member.getPassword();
+  public String join(@RequestBody JoinRequestDto reqDto) {
+    System.out.println("----- join > reqDto = " + reqDto);
+    String rawPW = reqDto.getPassword();
     String encPW = bCryptPasswordEncoder.encode(rawPW);
-    member.setPassword(encPW);
+    Member member = Member.builder()
+      .username(reqDto.getUsername())
+      .email(reqDto.getEmail())
+      .password(encPW)
+      .roles(reqDto.getRole())
+      .build();
     memberRepository.save(member);
-    return "redirect:/loginForm";
+//    return "redirect:/loginForm";
+    return "회원가입";
   }
 
   @GetMapping("/joinProc")

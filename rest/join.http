@@ -1,0 +1,11 @@
+
+POST http://localhost:8080/api/join
+Content-Type: application/json
+Authorization: bm
+
+{
+  "username": "test",
+  "password": "1234",
+  "email": "test@gmail.com",
+  "role": "USER"
+}
