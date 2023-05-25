@@ -92,7 +92,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
           .addFilter(corsFilter) // 모든 HTTP Request에 Filter => 시큐리테 필터레 등록하여 인증 (@CrossOrigin Annotation은 인증 불가)
           .formLogin().disable()
           .httpBasic().disable()
-          .addFilter(new JwtAuthenticationFilter())
+          .addFilter(new JwtAuthenticationFilter(authenticationManager())) //  formLogin 비활성한 것을 부활시키기 위해,WebSecurityConfigurerAdapter가 들고있는 authenticationManager를 UsernamePasswordAuthenticationFilter 넘겨준다.
           .authorizeRequests()
           .antMatchers("/user/**").authenticated() // 인증만 되면, 접근가능하게 설정함.
           .antMatchers("/manager/**").access("hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')")
