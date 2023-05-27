@@ -3,9 +3,13 @@ package com.study.security.config;
 import com.study.security.config.filter.MyFilter1;
 import com.study.security.config.filter.MyFilter2;
 import com.study.security.config.jwt.JwtAuthenticationFilter;
+import com.study.security.config.jwt.JwtAuthorizationFilter;
 import com.study.security.config.oauth.PrincipalOauth2UserService;
+import com.study.security.respotiroy.MemberRepository;
+import com.study.security.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -27,6 +31,8 @@ import org.springframework.web.filter.CorsFilter;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final PrincipalOauth2UserService principalOauth2UserService;
+    private final MemberService memberService;
+    private final MemberRepository memberRepository;
     
     private final CorsFilter corsFilter;
 
@@ -75,25 +81,30 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         ///################################
-        // Security 동작 전에 실행되는 Filter
-        http.addFilterBefore(new MyFilter1(), SecurityContextPersistenceFilter.class); // (커스텀필터, 스피링 필터) 해당 필터의 앞,뒤 중에서 실행될 순서를 지정
+        // cf) Security 동작 전에 실행되는 Filter
+//        http.addFilterBefore(new MyFilter1(), SecurityContextPersistenceFilter.class); // (커스텀필터, 스피링 필터) 해당 필터의 앞,뒤 중에서 실행될 순서를 지정
+//        http.addFilterAfter(new MyFilter2(), BasicAuthenticationFilter.class);
 
-        //
-        http.addFilterAfter(new MyFilter2(), BasicAuthenticationFilter.class);
+        // ################################################################################################
+        // ################################################################################################
 
-        ///################################
         http.csrf().disable();
+
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) // Security 세션정책
           .and()
-          .addFilter(corsFilter) // 모든 HTTP Request에 Filter => 시큐리테 필터레 등록하여 인증 (@CrossOrigin Annotation은 인증 불가)
+          .addFilter(corsFilter) // 모든 HTTP Request에 Filter => 시큐리티 필터에 등록 후, 인증 (@CrossOrigin Annotation은 인증 불가)
+          // 기본 Form 비활성화
           .formLogin().disable()
           .httpBasic().disable()
-          .addFilter(new JwtAuthenticationFilter(authenticationManager())) //  formLogin 비활성한 것을 부활시키기 위해,WebSecurityConfigurerAdapter가 들고있는 authenticationManager를 UsernamePasswordAuthenticationFilter 넘겨준다.
+          // JWT Filter
+          .addFilter(new JwtAuthenticationFilter(authenticationManager(), memberService)) // 유저 정보 검증 & Token 생성 & 응답 // formLogin 비활성한 것을 부활시키기 위해,WebSecurityConfigurerAdapter가 들고있는 authenticationManager를 UsernamePasswordAuthenticationFilter 넘겨준다.
+          .addFilter(new JwtAuthorizationFilter(authenticationManager(), memberRepository))
+          // 권한설정
           .authorizeRequests()
-          .antMatchers("/api/user/**").authenticated() // 인증만 되면, 접근가능하게 설정함.
+          .antMatchers(HttpMethod.POST,"/login","/join").permitAll()
+          .antMatchers("/api/user/**", "/api/v1/user/**").authenticated() // 인증만 되면, 접근가능하게 설정함.
           .antMatchers("/api/manager/**").access("hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')")
           .antMatchers("/api/admin/**").access("hasRole('ROLE_ADMIN')")
-          .antMatchers("/api/v1/user/**").authenticated() // 인증만 되면, 접근가능하게 설정함.
           .antMatchers("/api/v1/manager/**").access("hasRole('ROLE_ADMIN') or hasRole('ROLE_MANAGER')")
           .antMatchers("/api/v1/admin/**").access("hasRole('ROLE_ADMIN')")
           .anyRequest().permitAll()

@@ -1,7 +1,5 @@
 package com.study.security.config;
 
-import com.study.security.config.filter.MyFilter1;
-import com.study.security.config.filter.MyFilter2;
 import com.study.security.config.filter.MyFilter3;
 import com.study.security.config.filter.MyFilter4;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;

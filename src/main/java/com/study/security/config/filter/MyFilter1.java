@@ -22,7 +22,7 @@ public class MyFilter1 implements Filter {
     HttpServletResponse res = (HttpServletResponse) response; // DownCasting 해준다.
 
     System.out.println(" Filter1 실행! ");
-    System.out.println("------ req.getParameterNames() "+req.getParameterNames().toString());
+//    System.out.println("------ req.getParameterNames() "+req.getParameterNames().toString());
 
     // Token
     String token = "bm";

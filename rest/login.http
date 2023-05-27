@@ -1,9 +1,17 @@
 
+
+
+# @no-redirect
 POST http://localhost:8080/login
 Content-Type: application/json
-Authorization: bm
 
 {
-  "username": "d",
+  "email": "admin@gmail.com",
   "password": "1234"
 }
+
+
+> {%
+    client.global.set("AUTHORIZATION", response.headers.valueOf("Authorization"));
+    client.log("생성된 AUTHORIZATION: " + client.global.get("AUTHORIZATION"));
+%}

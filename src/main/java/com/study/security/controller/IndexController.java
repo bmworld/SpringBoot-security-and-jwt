@@ -148,4 +148,27 @@ public class IndexController {
   public @ResponseBody String managerInfo() {
     return "매니저 정보";
   }
+
+
+
+  @GetMapping("/v1/user")
+  public String userV1(@AuthenticationPrincipal PrincipalDetails principalDetails) {
+    System.out.println("----- /v1/user > member = " + principalDetails.getMember());
+    return "--- IndexController > user";
+  }
+
+  @GetMapping("/v1/manager")
+  public String managerV1(@CurrentUser Member member) {
+    System.out.println("----- /v1/manager > member = " + member);
+    return "--- IndexController > manager";
+  }
+
+  @GetMapping("/v1/admin")
+  public String adminV1(@CurrentUser Member member) {
+    System.out.println("----- /v1/admin > member = " + member);
+    return "--- IndexController > admin";
+  }
+
+
+
 }
